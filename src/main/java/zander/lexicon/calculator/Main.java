@@ -1,13 +1,15 @@
 package zander.lexicon.calculator;
 
-import java.util.Objects;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
-        System.out.println("type enter mathematical expressions to calculate their " +
+        System.out.println("Enter mathematical expressions to calculate their " +
                 "result or \"quit\" to exit the program");
 
         boolean quitting = false;
@@ -20,12 +22,17 @@ public class Main {
                     break;
                 }
 
-                if (Objects.equals(input, "")) {
+                if (input.isEmpty()) {
                     throw new InvalidInputException("Input cannot be empty. Please enter a valid expression.");
                 }
 
-                //tokenize input
-                //remember to add specific catches with error messages for the user!
+                Tokenizer tokenizer = new Tokenizer(input);
+                List<Token> output = tokenizer.tokenize();
+                System.out.println(output);
+
+                Parser parser = new Parser(output);
+                System.out.println(parser.Parse());
+
             } catch (Exception e) {
                 System.out.println("error: " + e.getMessage());
             }
