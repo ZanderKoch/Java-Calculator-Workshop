@@ -88,7 +88,15 @@ public class Parser {
             /*if it was not a number it should be an expression within parentheses,
             advance past the opening parenthesis start parsing the expression.*/
             index++;
-            return parseExpression();
+            Node expression = parseExpression();
+
+            //check that we haven't gone past the end of the token list or are missing a closing parenthesis
+            if (index >= tokens.size() || !matchTypes(tokens.get(index), TokenType.RIGHT_PAREN )) {
+                throwUnexpectedToken(tokens.get(index), TokenType.RIGHT_PAREN);
+            }
+            index++; //advance past the closing parenthesis
+
+            return expression;
         } else {
             throwUnexpectedToken(tokens.get(index), TokenType.NUMBER, TokenType.LEFT_PAREN);
         }
