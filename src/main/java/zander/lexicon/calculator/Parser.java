@@ -22,6 +22,11 @@ public class Parser {
     public Object Parse(){
         index = 0;
         Node parseTree = parseExpression();
+
+        if (index < tokens.size()){
+            throw new IllegalArgumentException("The whole Token list could not be parsed");
+        }
+        //debug
         System.out.println(parseTree);
         return parseTree.evaluate();
     }
