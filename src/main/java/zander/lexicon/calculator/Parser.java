@@ -12,7 +12,7 @@ import java.util.List;
  * using recursive descent parsing, which can then be evaluated to calculate the result of the expression that the tokens represent
  */
 public class Parser {
-    private List<Token> tokens;
+    private final List<Token> tokens;
     private int index = 0;
 
     public Parser(List<Token> tokens) {
@@ -38,7 +38,7 @@ public class Parser {
         Node left = parseTerm();
 
         // Look for '+' or '-' and handle subsequent terms
-        while (index < tokens.size() && matchTypes(tokens.get(index), TokenType.PLUS, TokenType.MINUS)) {
+        while (index < tokens.size() && tokens.get(index).matchTypes(TokenType.PLUS, TokenType.MINUS)) {
             // Get the operator
             Token operator = tokens.get(index);
             index++; // Advance past the operator
@@ -62,7 +62,7 @@ public class Parser {
         Node left = parseFactor();
 
         // If there's a '*' or '/' operator, recursively parse the rest
-        if (index < tokens.size() && matchTypes(tokens.get(index), TokenType.MULTIPLY, TokenType.DIVIDE)) {
+        if (index < tokens.size() && tokens.get(index).matchTypes(TokenType.MULTIPLY, TokenType.DIVIDE)) {
             // Get the operator
             Token operator = tokens.get(index);
             index++; // Advance past the operator
@@ -85,18 +85,18 @@ public class Parser {
         // A factor is either a number or an expression surrounded by parentheses
         /*If we found a number then we don't have to go any deeper, and can send the number we found up
         * and advance the current token*/
-        if (matchTypes(tokens.get(index), TokenType.NUMBER)){
+        if (tokens.get(index).matchTypes( TokenType.NUMBER)){
             Token foundToken = tokens.get(index);
             index++;
             return new Node(foundToken);
-        } else if (matchTypes(tokens.get(index), TokenType.LEFT_PAREN)){
+        } else if (tokens.get(index).matchTypes(TokenType.LEFT_PAREN)){
             /*if it was not a number it should be an expression within parentheses,
             advance past the opening parenthesis start parsing the expression.*/
             index++;
             Node expression = parseExpression();
 
             //check that we haven't gone past the end of the token list or are missing a closing parenthesis
-            if (index >= tokens.size() || !matchTypes(tokens.get(index), TokenType.RIGHT_PAREN )) {
+            if (index >= tokens.size() || !tokens.get(index).matchTypes(TokenType.RIGHT_PAREN )) {
                 throwUnexpectedToken(tokens.get(index), TokenType.RIGHT_PAREN);
             }
             index++; //advance past the closing parenthesis
@@ -106,15 +106,6 @@ public class Parser {
             throwUnexpectedToken(tokens.get(index), TokenType.NUMBER, TokenType.LEFT_PAREN);
         }
         return null; //should never be reached, just prevents a compilation error
-    }
-
-    private boolean matchTypes(Token token, TokenType... targetTypes){
-        for (TokenType targetType : targetTypes){
-            if (token.getType() == targetType ){
-                return true;
-            }
-        }
-        return false;
     }
 
     private void throwUnexpectedToken(Token actual, TokenType firstExpected, TokenType... additionalExpected) {

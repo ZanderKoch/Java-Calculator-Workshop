@@ -24,4 +24,13 @@ public class Token {
     public String toString() {
         return String.format("%s(%s)", type, value);
     }
+
+    public boolean matchTypes(TokenType... targetTypes){
+        for (TokenType targetType : targetTypes){
+            if (this.getType() == targetType ){
+                return true;
+            }
+        }
+        return false;
+    }
 }
